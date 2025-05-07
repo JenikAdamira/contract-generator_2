@@ -1,0 +1,4 @@
+Flask
+docxtpl
+python-docx
+lxml
