@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generátor smlouvy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md space-y-6">
+    <h1 class="text-3xl font-bold text-center text-blue-700">Generátor smlouvy o dílo</h1>
+    <form method="POST" class="space-y-6">
+<!-- Výběr šablony -->
+<div>
+  <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Výběr šablony</h2>
+  <label class="block text-sm font-semibold text-gray-700 mb-1">Zvolte šablonu</label>
+  <select name="sablona" required class="w-full mb-4 p-2 border rounded">
+    <option value="SOD_PS24.docx">SOD PŠ24 realizace</option>
+    <option value="SOD_PS24_sediment.docx">SOD PŠ24 realizace - SEDIMENT</option>
+  </select>
+</div>
+      
+<!-- Sekce: Identifikace akce -->
+<div>
+  <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Identifikace akce</h2>
+  <div id="akce-wrapper" class="space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-1">Název akce</label>
+      <input type="text" name="nazev_akce_1" required class="w-full mb-2 p-2 border rounded" />
+      <label class="block text-sm font-semibold text-gray-700 mb-1">Číslo akce</label>
+      <input type="text" name="cislo_akce_1" required class="w-full p-2 border rounded" />
+    </div>
+  </div>
+  <input type="hidden" name="akce_count" id="akce_count" value="1" />
+  <button type="button" onclick="pridatAkci()" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2">
+    Vložit další akci
+  </button>
+
+  <div id="verejna-zakazka-field" class="mt-4 hidden">
+    <label class="block text-sm font-semibold text-gray-700 mb-1">Název veřejné zakázky</label>
+    <input type="text" name="verejna_zakazka" class="w-full p-2 border rounded" />
+  </div>
+</div>
+
+      <!-- Sekce: Odpovědné osoby -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Odpovědné osoby</h2>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Vedoucí</label>
+        <select name="vedouci" required class="w-full mb-4 p-2 border rounded">
+          <option value="" disabled selected>Vyber vedoucího</option>
+          <option value="Marcel Chmelík DiS., vedoucí oddělení realizace investic">Marcel Chmelík DiS.</option>
+          <option value="Ing. Jakub Hušek, vedoucí oddělení přípravy investic">Ing. Jakub Hušek</option>
+        </select>
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Dozor (TDS)</label>
+        <select name="dozor" required class="w-full p-2 border rounded">
+          <option value="" disabled selected>Vyber TDS</option>
+          <option>Ing. Pavel Kamenický</option>
+          <option>Ing. František Zurek</option>
+          <option>Martin Pala</option>
+          <option>Ing. Michal Ranný</option>
+          <option>Milan Kyral DiS.</option>
+          <option>Ing. Vladimír Vít</option>
+          <option>Ing. Marek Špryňar</option>
+          <option>Ing. Jan Adamíra</option>
+        </select>
+      </div>
+
+      <!-- Sekce: Projektova dokumentace -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Projektová dokumentace</h2>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Typ projektové dokumentace</label>
+        <select name="pd" required class="w-full mb-4 p-2 border rounded">
+          <option value="zjednodusena">zjednodušená projektová dokumentace</option>
+          <option value="provadeci">projektová dokumentace pro provedení stavby</option>
+        </select>
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Rok vypracování dokumentace</label>
+        <input type="text" name="pdrok" required class="w-full mb-4 p-2 border rounded" />
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Společnost</label>
+        <input type="text" name="pdspolecnost" required class="w-full mb-4 p-2 border rounded" />
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Sídlo společnosti</label>
+        <input type="text" name="pdsidlo" required class="w-full mb-4 p-2 border rounded" />
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Zodpovědný projektant</label>
+        <input type="text" name="pdproj" required class="w-full p-2 border rounded" />
+
+        <h2 class="text-xl font-semibold mt-6 mb-2 text-gray-700 uppercase">Pojištění odpovědnosti</h2>
+        <select name="poj" required class="w-full mb-4 p-2 border rounded">
+          <option value="10 000 000">10 000 000 Kč</option>
+          <option value="20 000 000">20 000 000 Kč</option>
+        </select>
+      </div>
+
+      <!-- Sekce: Doba plnění -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Doba plnění</h2>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Zahájení (měsíc a rok)</label>
+        <input type="text" name="zahajeni" required class="w-full mb-4 p-2 border rounded" />
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Způsob zadání termínu dokončení</label>
+        <select name="dokonceni_typ" id="dokonceni_typ" onchange="toggleDokonceni()" class="w-full mb-2 p-2 border rounded">
+          <option value="datum">nejpozději do (datum)</option>
+          <option value="text">vlastní text</option>
+        </select>
+        <input type="date" name="dokonceni_datum" id="dokonceni_datum" class="w-full mb-4 p-2 border rounded" />
+        <input type="text" name="dokonceni_text" id="dokonceni_text" class="w-full mb-4 p-2 border rounded hidden" placeholder="Zadej vlastní text" />
+      </div>
+
+      <!-- Sekce: Bankovní záruka -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Bankovní záruka</h2>
+        <select name="bz" required class="w-full mb-4 p-2 border rounded">
+          <option value="ANO">ANO</option>
+          <option value="NE">NE</option>
+        </select>
+      </div>
+
+<!-- Sekce: Listiny -->
+<div>
+  <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Listiny tvořící součást smlouvy</h2>
+  <div id="listiny-wrapper" class="space-y-2 mb-2">
+    <textarea name="listina_1" rows="2" class="w-full p-2 border rounded resize-none"></textarea>
+    <textarea name="listina_2" rows="2" class="w-full p-2 border rounded resize-none"></textarea>
+  </div>
+  <input type="hidden" name="listiny_count" id="listiny_count" value="2" />
+  <button type="button" onclick="pridatListinu()" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+    Vložit další pole
+  </button>
+</div>
+
+      <!-- Sekce: Zvláštní ustanovení -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-700 uppercase">Zvláštní ustanovení</h2>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Vyhrazené položky</label>
+        <select name="vyh" required class="w-full p-2 border rounded">
+          <option value="NE">NE</option>
+          <option value="ANO">ANO</option>
+        </select>
+      </div>
+
+<!-- Sekce: Negace -->
+<div>
+  <label class="block text-sm font-semibold text-gray-700 mb-1">Negace ustanovení obchodních podmínek</label>
+  <div id="negace-wrapper" class="space-y-2 mb-2">
+    <textarea name="negace_1" rows="2" class="w-full p-2 border rounded resize-none">čl. 2. Všeobecné povinnosti zhotovitele, odst. 2.3., písm. a) Dokumentace, povodňové plány, geodetické práce, body 4., 5.</textarea>
+    <textarea name="negace_2" rows="2" class="w-full p-2 border rounded resize-none"></textarea>
+  </div>
+  <input type="hidden" name="negace_count" id="negace_count" value="2" />
+  <button type="button" onclick="pridatNegaci()" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+    Vložit další pole
+  </button>
+</div>
+
+
+      <!-- Odesílací tlačítko -->
+      <div>
+        <button type="submit" class="w-full mt-4 bg-blue-600 text-white p-3 rounded hover:bg-blue-700 text-lg">
+          Vygenerovat smlouvu
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function toggleDokonceni() {
+      const typ = document.getElementById("dokonceni_typ").value;
+      document.getElementById("dokonceni_datum").classList.toggle("hidden", typ !== "datum");
+      document.getElementById("dokonceni_text").classList.toggle("hidden", typ !== "text");
+    }
+
+function pridatListinu() {
+  const wrapper = document.getElementById("listiny-wrapper");
+  const countInput = document.getElementById("listiny_count");
+  let count = parseInt(countInput.value);
+  count++;
+  countInput.value = count;
+
+  const textarea = document.createElement("textarea");
+  textarea.name = `listina_${count}`;
+  textarea.rows = 2;
+  textarea.className = "w-full p-2 border rounded resize-none";
+  wrapper.appendChild(textarea);
+}
+
+function pridatNegaci() {
+  const wrapper = document.getElementById("negace-wrapper");
+  const countInput = document.getElementById("negace_count");
+  let count = parseInt(countInput.value);
+  count++;
+  countInput.value = count;
+
+  const textarea = document.createElement("textarea");
+  textarea.name = `negace_${count}`;
+  textarea.rows = 2;
+  textarea.className = "w-full p-2 border rounded resize-none";
+  wrapper.appendChild(textarea);
+}
+    function pridatAkci() {
+  const wrapper = document.getElementById("akce-wrapper");
+  const countInput = document.getElementById("akce_count");
+  let count = parseInt(countInput.value);
+  count++;
+
+  const div = document.createElement("div");
+
+  div.innerHTML = `
+    <label class="block text-sm font-semibold text-gray-700 mb-1">Název akce</label>
+    <input type="text" name="nazev_akce_${count}" class="w-full mb-2 p-2 border rounded" />
+    <label class="block text-sm font-semibold text-gray-700 mb-1">Číslo akce</label>
+    <input type="text" name="cislo_akce_${count}" class="w-full p-2 border rounded" />
+  `;
+
+  wrapper.appendChild(div);
+  countInput.value = count;
+
+  // Zobraz veřejnou zakázku, pokud je víc než 1 akce
+  if (count >= 2) {
+    document.getElementById("verejna-zakazka-field").classList.remove("hidden");
+  }
+}
+  </script>
+</body>
+</html>
